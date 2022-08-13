@@ -36,3 +36,17 @@ on a personal computer but could take a few minutes since they must run multiple
 The output from the experiments will be in the `results` directory, under the appropriate experiment name.
 The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will callthe
 BSDS benchmarking code to evaluate the image segmentation output.
+
+## Reference
+
+```bibtex
+@InProceedings{pmlr-v162-macgregor22a,
+  title = 	 {A Tighter Analysis of Spectral Clustering, and Beyond},
+  author =       {Macgregor, Peter and Sun, He},
+  booktitle = 	 {Proceedings of the 39th International Conference on Machine Learning},
+  pages = 	 {14717--14742},
+  year = 	 {2022},
+  volume = 	 {162},
+  publisher =    {PMLR},
+}
+```
