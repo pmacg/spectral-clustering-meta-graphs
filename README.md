@@ -51,7 +51,7 @@ python experiment bsds 176039
 
 ## Output
 The output from the experiments will be in the `results` directory, under the appropriate experiment name.
-The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will callthe
+The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will call the
 BSDS benchmarking code to evaluate the image segmentation output.
 
 ### Viewing the BSDS segmentations
