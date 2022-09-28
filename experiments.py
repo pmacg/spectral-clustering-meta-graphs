@@ -327,16 +327,20 @@ def get_bsd_num_cluster(gt_filename) -> int:
     return max(2, int(numpy.median(nums_segments)))
 
 
-def run_bsds_experiment():
+def run_bsds_experiment(image_files=None):
     """
     Run experiments on the BSDS dataset.
+    :image_files: a list of the BSDS image files to experiment with
     :return:
     """
     ground_truth_directory = "data/bsds/BSR/BSDS500/data/groundTruth/test/"
     images_directory = "data/bsds/BSR/BSDS500/data/images/test/"
     output_directory = "results/bsds/segs/"
-
-    image_files = os.listdir(images_directory)
+    
+    # If no list of image files is provided, then run the experiment on all image files. 
+    if image_files is None:
+        image_files = os.listdir(images_directory)
+        
     for i, file in enumerate(image_files):
         id = file.split(".")[0]
 
@@ -376,6 +380,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Run the experiments.')
     parser.add_argument('experiment', type=str, choices=['cycle', 'grid', 'mnist', 'usps', 'bsds'],
                         help="which experiment to perform")
+    parser.add_argument('bsds_filename', type=str, nargs='?', help="(optional) specify a single BSDS image file to segment")
     return parser.parse_args()
 
 
@@ -391,10 +396,13 @@ def main():
     elif args.experiment == 'usps':
         run_usps_experiment()
     elif args.experiment == 'bsds':
-        logger.warning("\nThe BSDS experiment is very resource-intensive. We recommend running on a compute server.")
-        logger.info("Waiting 10 seconds before starting the experiment...")
-        time.sleep(10)
-        run_bsds_experiment()
+        if args.bsds_filename is None:
+            logger.warning("\nThe BSDS experiment is very resource-intensive. We recommend running on a compute server.")
+            logger.info("Waiting 10 seconds before starting the experiment...")
+            time.sleep(10)
+            run_bsds_experiment()
+        else:
+            run_bsds_experiment(image_files=[args.bsds_filename])
 
 
 if __name__ == "__main__":

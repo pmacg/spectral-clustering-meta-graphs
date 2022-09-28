@@ -16,7 +16,12 @@ pip install -r requirements.txt
 ```
 
 If you would like to run the experiments on the BSDS dataset, you should untar the data file
-in the `data/bsds` directory.
+in the `data/bsds` directory. On Linux, this is done with the following commands.
+
+```bash
+cd data/bsds
+tar -xvf BSR_bsds500.tgz
+```
 
 ## Running the experiments
 To run one of the experiments described in the paper, run
@@ -31,6 +36,12 @@ The MNIST and USPS experiments will run easily on a laptop or desktop. The `cycl
 on a personal computer but could take a few minutes since they must run multiple trials for each number of eigenvectors.
 
 **Please note that the BSDS experiment is quite resource-intensive, and we recommend running on a compute server.**
+
+You can instead choose to run the BSDS experiment on only one of the images from the dataset using the following command.
+
+```bash
+python experiment.py bsds {image_filename}
+```
 
 ## Output
 The output from the experiments will be in the `results` directory, under the appropriate experiment name.

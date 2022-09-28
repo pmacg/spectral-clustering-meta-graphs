@@ -130,3 +130,8 @@ dmypy.json
 
 # Ignore pycharm files
 .idea/
+
+# Data and results files
+data/bsds/BSR/
+*.jpg
+*.mat
