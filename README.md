@@ -40,13 +40,35 @@ on a personal computer but could take a few minutes since they must run multiple
 You can instead choose to run the BSDS experiment on only one of the images from the dataset using the following command.
 
 ```bash
-python experiment.py bsds {image_filename}
+python experiment.py bsds {bsds_image_id}
+```
+
+For example:
+
+```bash
+python experiment bsds 176039
 ```
 
 ## Output
 The output from the experiments will be in the `results` directory, under the appropriate experiment name.
 The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will callthe
 BSDS benchmarking code to evaluate the image segmentation output.
+
+### Viewing the BSDS segmentations
+While the `analyseBsdsResults` script will evaluate the BSDS segmentations, if you would like to view the
+segmented images, you can use the provided MATLAB function `compareSegmentations`. This is the method used to generate
+Figure 1 in the paper. For example:
+
+```matlab
+compareSegmentations("176039")
+```
+
+Note that the experiment must have been run for the image ID 176039 before running the MATLAB visualisation script.
+
+## Image Segmentation
+If you are primarily interested in the application of spectral clustering to image segmentation, you could take a look at
+[this GitHub repository](https://github.com/pmacg/spectral-image-segmentation) which includes only the image segmentation code
+from our project and provides a straightforward interface to segment any image file.
 
 ## Reference
 

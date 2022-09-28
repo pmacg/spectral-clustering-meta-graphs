@@ -6,10 +6,12 @@ addpath data/bsds/BSR/bench/benchmarks/
 outputSegmentationDirectory = strcat(pwd, "/results/bsds/segs/");
 
 % The directory containing the ground truth segmentations for the test data
-gtSegmentationDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/groundTruth/test/");
+gtSegmentationTestDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/groundTruth/test/");
+gtSegmentationTrainDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/groundTruth/train/");
 
 % The directory containing the original images
-imageDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/images/test/");
+imageTestDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/images/test/");
+imageTrainDirectory = strcat(pwd, "/data/bsds/BSR/BSDS500/data/images/train/");
 
 %% Run the evaluation
 
@@ -58,10 +60,14 @@ iids = dir(fullfile(outputSegmentationDirectory,'*.mat'));
 for i = 1 : numel(iids)
     totalNumImages = totalNumImages + 1;
     
-    % Get the names of the input and ground truth files.
+    % Get the names of the input and ground truth files. We will look in
+    % both the training and testing directories.
     thisId = iids(i).name(1:end-4);
     inFile = fullfile(outputSegmentationDirectory, strcat(thisId, '.mat'));
-    gtFile = fullfile(gtSegmentationDirectory, strcat(thisId, '.mat'));
+    gtFile = fullfile(gtSegmentationTestDirectory, strcat(thisId, '.mat'));
+    if ~isfile(gtFile)
+       gtFile = fullfile(gtSegmentationTrainDirectory, strcat(thisId, '.mat'));
+    end
     
     % Get the statistics for the current image.
     fprintf("Processing file %s...\n", thisId)
