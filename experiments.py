@@ -327,25 +327,42 @@ def get_bsd_num_cluster(gt_filename) -> int:
     return max(2, int(numpy.median(nums_segments)))
 
 
-def run_bsds_experiment(image_files=None):
+def run_bsds_experiment(image_id=None):
     """
     Run experiments on the BSDS dataset.
     :image_files: a list of the BSDS image files to experiment with
     :return:
     """
-    ground_truth_directory = "data/bsds/BSR/BSDS500/data/groundTruth/test/"
-    images_directory = "data/bsds/BSR/BSDS500/data/images/test/"
-    output_directory = "results/bsds/segs/"
-    
-    # If no list of image files is provided, then run the experiment on all image files. 
-    if image_files is None:
+    if image_id is None:
+        # If no image file is provided, then run the experiment on all image files in the test data.
+        ground_truth_directory = "data/bsds/BSR/BSDS500/data/groundTruth/test/"
+        images_directory = "data/bsds/BSR/BSDS500/data/images/test/"
+        output_directory = "results/bsds/segs/"
         image_files = os.listdir(images_directory)
+    else:
+        # If an image filename is provided, then work out whether it is in the test or training data
+        image_filename = image_id + '.jpg'
+        images_directory = "data/bsds/BSR/BSDS500/data/images/test/"
+        if image_filename in os.listdir(images_directory):
+            ground_truth_directory = "data/bsds/BSR/BSDS500/data/groundTruth/test/"
+            output_directory = "results/bsds/segs/"
+            image_files = [image_filename]
+        else:
+            images_directory = "data/bsds/BSR/BSDS500/data/images/train/"
+            ground_truth_directory = "data/bsds/BSR/BSDS500/data/groundTruth/train/"
+            output_directory = "results/bsds/segs/"
+            image_files = [image_filename]
+
+            if image_filename not in os.listdir(images_directory):
+                # If the target file is not in the training directory, then it's a lost cause.
+                raise Exception("BSDS image ID not found.")
         
     for i, file in enumerate(image_files):
         id = file.split(".")[0]
 
         # Ignore any images we've already tried.
         if os.path.exists(output_directory + id + ".mat"):
+            logger.debug(f"Skipping image {file} - output already exists.")
             continue
 
         logger.info(f"Running BSDS experiment with image {file}. (Image {i+1}/{len(image_files)})")
@@ -380,7 +397,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Run the experiments.')
     parser.add_argument('experiment', type=str, choices=['cycle', 'grid', 'mnist', 'usps', 'bsds'],
                         help="which experiment to perform")
-    parser.add_argument('bsds_filename', type=str, nargs='?', help="(optional) specify a single BSDS image file to segment")
+    parser.add_argument('bsds_image', type=str, nargs='?', help="(optional) the BSDS ID of a single BSDS image file to segment")
     return parser.parse_args()
 
 
@@ -396,13 +413,13 @@ def main():
     elif args.experiment == 'usps':
         run_usps_experiment()
     elif args.experiment == 'bsds':
-        if args.bsds_filename is None:
+        if args.bsds_image is None:
             logger.warning("\nThe BSDS experiment is very resource-intensive. We recommend running on a compute server.")
             logger.info("Waiting 10 seconds before starting the experiment...")
             time.sleep(10)
             run_bsds_experiment()
         else:
-            run_bsds_experiment(image_files=[args.bsds_filename])
+            run_bsds_experiment(image_id=args.bsds_image)
 
 
 if __name__ == "__main__":
