@@ -35,7 +35,7 @@ where ```{experiment_name}``` is one of `cycle`, `grid`, `mnist`, `usps`, or `bs
 The MNIST and USPS experiments will run easily on a laptop or desktop. The `cycle` and `grid` experiments will also run
 on a personal computer but could take a few minutes since they must run multiple trials for each number of eigenvectors.
 
-**Please note that the BSDS experiment is quite resource-intensive, and we recommend running on a compute server.**
+**Please note that the full BSDS experiment is quite resource-intensive, and we recommend running on a compute server.**
 
 You can instead choose to run the BSDS experiment on only one of the images from the dataset using the following command.
 
@@ -46,7 +46,7 @@ python experiment.py bsds {bsds_image_id}
 For example:
 
 ```bash
-python experiment bsds 176039
+python experiment.py bsds 176039
 ```
 
 ## Output
