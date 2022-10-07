@@ -1,6 +1,6 @@
 # Beyond Spectral Clustering
 
-This directory contains the code to reproduce the results in the paper "A Tighter Analysis of Spectral Clustering, and Beyond", published in 
+This directory contains the code to reproduce the results in the paper "[A Tighter Analysis of Spectral Clustering, and Beyond](https://arxiv.org/abs/2208.01724)", published in 
 ICML 2022.
 
 ## Preparing your environment
