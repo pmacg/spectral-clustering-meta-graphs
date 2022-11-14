@@ -2,6 +2,9 @@ function compareSegmentations(segid)
 %COMPARESEGMENTATIONS Show the given image with the segmentation found by our
 %algorithm.
 
+% Add the path to the BSDS benchmarking code
+addpath data/bsds/BSR/bench/benchmarks/
+
 % The directory containing the automatically generated segmentations of the
 % test data.
 outputSegmentationDirectory = strcat(pwd, "/results/bsds/segs/");
