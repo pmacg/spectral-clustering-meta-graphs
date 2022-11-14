@@ -1,6 +1,6 @@
 # Beyond Spectral Clustering
 
-This directory contains the code to reproduce the results in the paper "A Tighter Analysis of Spectral Clustering, and Beyond", published in 
+This directory contains the code to reproduce the results in the paper "[A Tighter Analysis of Spectral Clustering, and Beyond](https://arxiv.org/abs/2208.01724)", published in 
 ICML 2022.
 
 ## Preparing your environment
@@ -35,7 +35,7 @@ where ```{experiment_name}``` is one of `cycle`, `grid`, `mnist`, `usps`, or `bs
 The MNIST and USPS experiments will run easily on a laptop or desktop. The `cycle` and `grid` experiments will also run
 on a personal computer but could take a few minutes since they must run multiple trials for each number of eigenvectors.
 
-**Please note that the BSDS experiment is quite resource-intensive, and we recommend running on a compute server.**
+**Please note that the full BSDS experiment is quite resource-intensive, and we recommend running on a compute server.**
 
 You can instead choose to run the BSDS experiment on only one of the images from the dataset using the following command.
 
@@ -46,12 +46,12 @@ python experiment.py bsds {bsds_image_id}
 For example:
 
 ```bash
-python experiment bsds 176039
+python experiment.py bsds 176039
 ```
 
 ## Output
 The output from the experiments will be in the `results` directory, under the appropriate experiment name.
-The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will callthe
+The BSDS results can be analysed using the matlab script `analyseBsdsResults.m` which will call the
 BSDS benchmarking code to evaluate the image segmentation output.
 
 ### Viewing the BSDS segmentations
