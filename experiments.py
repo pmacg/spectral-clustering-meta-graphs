@@ -1,6 +1,7 @@
 """
 Run experiments with the new spectral clustering approach.
 """
+import multiprocessing
 import time
 import argparse
 import scipy as sp
@@ -22,6 +23,20 @@ import pysc.objfunc
 from pysc.sclogging import logger
 
 
+def basic_experiment_sub_process(dataset, k, num_eigenvalues: int, q):
+    logger.info(f"Starting clustering: {dataset} with {num_eigenvalues} eigenvalues.")
+    start_time = time.time()
+    found_clusters = sgtl.clustering.spectral_clustering(dataset.graph, num_clusters=k,
+                                                         num_eigenvectors=num_eigenvalues)
+    end_time = time.time()
+    total_time = end_time - start_time
+    logger.info(f"Finished clustering: {dataset} with {num_eigenvalues} eigenvalues.")
+    this_rand_score = pysc.evaluation.adjusted_rand_index(dataset.gt_labels, found_clusters)
+    this_mutual_info = pysc.evaluation.mutual_information(dataset.gt_labels, found_clusters)
+    this_conductance = pysc.objfunc.KWayExpansion.apply(dataset.graph, found_clusters)
+    q.put((num_eigenvalues, this_rand_score, this_mutual_info, this_conductance, total_time))
+
+
 def basic_experiment(dataset, k):
     """
     Run a basic experiment with a given dataset, in which we do spectral clustering with a variety of numbers of
@@ -32,19 +47,6 @@ def basic_experiment(dataset, k):
     """
     logger.info(f"Running basic experiment with {dataset.__class__.__name__}.")
 
-    def sub_process(num_eigenvalues: int, q):
-        logger.info(f"Starting clustering: {dataset} with {num_eigenvalues} eigenvalues.")
-        start_time = time.time()
-        found_clusters = sgtl.clustering.spectral_clustering(dataset.graph, num_clusters=k,
-                                                             num_eigenvectors=num_eigenvalues)
-        end_time = time.time()
-        total_time = end_time - start_time
-        logger.info(f"Finished clustering: {dataset} with {num_eigenvalues} eigenvalues.")
-        this_rand_score = pysc.evaluation.adjusted_rand_index(dataset.gt_labels, found_clusters)
-        this_mutual_info = pysc.evaluation.mutual_information(dataset.gt_labels, found_clusters)
-        this_conductance = pysc.objfunc.KWayExpansion.apply(dataset.graph, found_clusters)
-        q.put((num_eigenvalues, this_rand_score, this_mutual_info, this_conductance, total_time))
-
     # Start all of the sub-processes to do the clustering with different numbers of eigenvalues
     rand_scores = {}
     mutual_info = {}
@@ -53,7 +55,7 @@ def basic_experiment(dataset, k):
     q = Queue()
     processes = []
     for i in range(2, k + 1):
-        p = Process(target=sub_process, args=(i, q))
+        p = Process(target=basic_experiment_sub_process, args=(dataset, k, i, q))
         p.start()
         processes.append(p)
 
@@ -78,22 +80,22 @@ def basic_experiment(dataset, k):
 ############################################
 # Experiments on MNIST and USPS
 ############################################
+def mnist_experiment_instance(d, nn, q):
+    this_rand_scores, this_mut_info, this_conductances, this_times = basic_experiment(
+        pysc.datasets.MnistDataset(k=nn, downsample=d), 10)
+    q.put((d, nn, this_rand_scores, this_mut_info, this_conductances, this_times))
+
 def run_mnist_experiment():
     """
     Run experiments on the MNIST dataset.
     """
-
-    def experiment_instance(d, nn, q):
-        this_rand_scores, this_mut_info, this_conductances, this_times = basic_experiment(
-            pysc.datasets.MnistDataset(k=nn, downsample=d), 10)
-        q.put((d, nn, this_rand_scores, this_mut_info, this_conductances, this_times))
 
     # We will construct the 3-NN graph for the MNIST dataset.
     k = 3
 
     # Kick off the experiment in a sub-process.
     q = Queue()
-    p = Process(target=experiment_instance, args=(None, k, q))
+    p = Process(target=mnist_experiment_instance, args=(None, k, q))
     p.start()
     p.join()
 
@@ -106,22 +108,22 @@ def run_mnist_experiment():
             for i in range(2, 11):
                 fout.write(f"{k}, {downsample}, {i}, {rand_scores[i]}\n")
 
+def usps_experiment_instance(d, nn, q):
+    this_rand_scores, this_mut_info, this_conductances, this_times = basic_experiment(
+        pysc.datasets.UspsDataset(k=nn, downsample=d), 10)
+    q.put((d, nn, this_rand_scores, this_mut_info, this_conductances, this_times))
 
 def run_usps_experiment():
     """
     Run experiments on the USPS dataset.
     """
-    def experiment_instance(d, nn, q):
-        this_rand_scores, this_mut_info, this_conductances, this_times = basic_experiment(
-            pysc.datasets.UspsDataset(k=nn, downsample=d), 10)
-        q.put((d, nn, this_rand_scores, this_mut_info, this_conductances, this_times))
 
     # We will construct the 3-NN graph
     k = 3
 
     # Kick off the experiment ina sub-process
     q = Queue()
-    p = Process(target=experiment_instance, args=(None, k, q))
+    p = Process(target=usps_experiment_instance, args=(None, k, q))
     p.start()
     p.join()
 
