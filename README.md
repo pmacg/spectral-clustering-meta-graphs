@@ -3,6 +3,8 @@
 This directory contains the code to reproduce the results in the paper "[A Tighter Analysis of Spectral Clustering, and Beyond](https://arxiv.org/abs/2208.01724)", published in 
 ICML 2022.
 
+If you have any questions or issues running the code, please do not hesitate to contact me by raising a Github issue or emailing me directly at [peter.macgregor@ed.ac.uk](mailto:peter.macgregor@ed.ac.uk).
+
 ## Preparing your environment
 Our code is primarily written in Python 3. There is also a matlab
 script for analysing the results of the BSDS experiment.
